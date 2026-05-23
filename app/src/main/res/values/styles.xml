@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="android:Theme.Material"/>
+
+    <style name="DeciButton" parent="android:Widget.Material.Button">
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <style name="DeciEditText" parent="android:Widget.Material.EditText">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColorHint">#333333</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+</resources>

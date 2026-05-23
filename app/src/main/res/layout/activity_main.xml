@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DECI"
+            android:textColor="#444444"
+            android:textSize="11sp"
+            android:letterSpacing="0.4"
+            android:layout_marginBottom="32dp"/>
+
+        <!-- big percentage -->
+        <TextView
+            android:id="@+id/tv_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="--.--%"
+            android:textColor="#FFFFFF"
+            android:textSize="72sp"
+            android:fontFamily="sans-serif-thin"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- progress bar -->
+        <ProgressBar
+            android:id="@+id/pb_main"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:max="1000"
+            android:progressTint="#FFFFFF"
+            android:progressBackgroundTint="#222222"
+            android:layout_marginBottom="32dp"/>
+
+        <!-- row 1 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CURRENT"
+                    android:textColor="#444444"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.3"
+                    android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:id="@+id/tv_current_now"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-- mA"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-light"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="POWER"
+                    android:textColor="#444444"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.3"
+                    android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:id="@+id/tv_watts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-- W"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-light"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="REMAINING"
+                    android:textColor="#444444"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.3"
+                    android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:id="@+id/tv_mah"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-- mAh"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-light"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- row 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="40dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VOLTAGE"
+                    android:textColor="#444444"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.3"
+                    android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:id="@+id/tv_voltage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-- V"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-light"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TEMP"
+                    android:textColor="#444444"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.3"
+                    android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:id="@+id/tv_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-- °C"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-light"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="COUNTER"
+                    android:textColor="#444444"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.3"
+                    android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:id="@+id/tv_counter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-light"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#111111"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Note Section -->
+        <LinearLayout
+            android:id="@+id/ll_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NOTE"
+                android:textColor="#444444"
+                android:textSize="10sp"
+                android:letterSpacing="0.3"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/tv_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Waiting for a 0.1% change. This shouldn't take long."
+                android:textColor="#AAAAAA"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-light"/>
+        </LinearLayout>
+
+        <!-- divisor label -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DIVISOR"
+            android:textColor="#444444"
+            android:textSize="10sp"
+            android:letterSpacing="0.3"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/et_divisor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#333333"
+            android:hint="20000"
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-light"
+            android:background="@null"
+            android:paddingBottom="8dp"
+            android:layout_marginBottom="4dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#222222"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Controls Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <!-- Left 50%: Calibrate & Apply -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_marginEnd="8dp">
+
+                <Button
+                    android:id="@+id/btn_calibrate"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Calibrate"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#111111"
+                    android:layout_marginEnd="4dp"/>
+
+                <Button
+                    android:id="@+id/btn_apply"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Apply"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="#222222"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <!-- Right 50%: Start/Stop Toggle -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_marginStart="8dp">
+
+                <Button
+                    android:id="@+id/btn_toggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="START"
+                    android:textColor="#000000"
+                    android:backgroundTint="#FFFFFF"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

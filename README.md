@@ -27,7 +27,9 @@ Standard Android battery broadcasts (`ACTION_BATTERY_CHANGED`) are event-driven 
 
 1. Clone the repository:
 
-    git clone https://github.com/yourusername/Deci-Battery.git
+```
+git clone https://github.com/BroBordd/Deci.git
+```
 
 2. Open the project directory in Android Studio.
 3. Sync Gradle and build the APK for your target device.
@@ -42,7 +44,9 @@ Standard Android battery broadcasts (`ACTION_BATTERY_CHANGED`) are event-driven 
 
 ## Screenshots
 
-*(Add screenshots of the Main Activity, the Notification, and the Widget here)*
+<img width="1080" height="2408" alt="Image" src="https://github.com/user-attachments/assets/ced12b70-b309-412c-b564-d089f08f87f9" />
+<img width="1080" height="580" alt="Image" src="https://github.com/user-attachments/assets/74ff48c9-e8dd-40a4-9469-78c1fc43b53a" />
+<img width="1080" height="376" alt="Image" src="https://github.com/user-attachments/assets/7e45cd22-521f-402e-ad4b-43ec320a3cb4" />
 
 ## License
 

@@ -70,6 +70,33 @@ public class BatteryService extends Service {
         }
     };
 
+    public static void loadDivisor(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("deci_prefs", Context.MODE_PRIVATE);
+        float manualDivisor = prefs.getFloat("manual_divisor", -1f);
+        if (manualDivisor != -1f) {
+            DIVISOR = manualDivisor;
+        } else {
+            float autoDivisor = prefs.getFloat("auto_divisor", -1f);
+            if (autoDivisor != -1f) {
+                DIVISOR = autoDivisor;
+            } else {
+                BatteryManager bm = context.getSystemService(BatteryManager.class);
+                int charge = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
+                int pct = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+                if (pct == 100) {
+                    DIVISOR = charge / 100f;
+                } else if (pct > 0) {
+                    float base = (float) charge / pct;
+                    float magnitude = (float) Math.pow(10, Math.floor(Math.log10(base)));
+                    float fallback = Math.round(base / magnitude) * magnitude;
+                    DIVISOR = fallback > 0 ? fallback : 20000f;
+                } else {
+                    DIVISOR = 20000f;
+                }
+            }
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent != null ? intent.getAction() : null;
@@ -93,6 +120,7 @@ public class BatteryService extends Service {
 
         if ("START".equals(action) || action == null) {
             if (!isServiceRunning) {
+                loadDivisor(this);
                 isServiceRunning = true;
                 startForeground(1, buildNotification());
                 registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
@@ -145,9 +173,31 @@ public class BatteryService extends Service {
         }
 
         BatteryManager bm = getSystemService(BatteryManager.class);
-        cachedCurrentNow = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
+        int rawCurrent = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
+        SharedPreferences prefs = getSharedPreferences("deci_prefs", MODE_PRIVATE);
 
-        // 1. Calculate exact elapsed time (dt) for high-precision math
+        // --- 1. Decide dynamically if current unit is uA or mA ---
+        int currentScale = prefs.getInt("current_scale", 0);
+
+        if (currentScale == 0 && rawCurrent != 0) {
+            int absRaw = Math.abs(rawCurrent);
+            if (absRaw > 20000) {
+                currentScale = 1000;
+                prefs.edit().putInt("current_scale", currentScale).apply();
+            } else if (absRaw < 100) {
+                currentScale = 1;
+                prefs.edit().putInt("current_scale", currentScale).apply();
+            }
+        }
+
+        if (currentScale == 1000 || (currentScale == 0 && Math.abs(rawCurrent) > 20000)) {
+            cachedCurrentNow = rawCurrent / 1000;
+        } else {
+            cachedCurrentNow = rawCurrent;
+        }
+        // ---------------------------------------------------------
+
+        // 2. Calculate exact elapsed time (dt) for high-precision math
         long now = SystemClock.elapsedRealtime();
         if (lastTickTime == 0) lastTickTime = now;
         double dt = (now - lastTickTime) / 1000.0;
@@ -161,7 +211,7 @@ public class BatteryService extends Service {
         double raw_delta = Math.abs(cachedCurrentNow) * dt;
         double step = DIVISOR / 10.0;
 
-        // 2. Hardware Corrector: Learn the exact ratio when the hardware finally ticks
+        // 3. Hardware Corrector: Learn the exact ratio when the hardware finally ticks
         if (lastCharge == -1 || newCharge != lastCharge) {
             if (lastCharge != -1) {
                 int actual_step = Math.abs(newCharge - lastCharge);
@@ -174,10 +224,13 @@ public class BatteryService extends Service {
                 float distanceToHalfLevel = Math.abs(calculatedLevel - (currentLevel / 2.0f));
 
                 if (distanceToLevel < 3.0f && distanceToLevel < distanceToHalfLevel) {
-                    SharedPreferences prefs = getSharedPreferences("deci_prefs", MODE_PRIVATE);
                     float savedX10 = prefs.getFloat("auto_divisor", -1f);
                     if (savedX10 == -1f || possibleDivisor < savedX10) {
                         prefs.edit().putFloat("auto_divisor", possibleDivisor).apply();
+                        // Silently apply the accurate dynamic calibration right away
+                        if (prefs.getFloat("manual_divisor", -1f) == -1f) {
+                            DIVISOR = possibleDivisor;
+                        }
                     }
                 }
 
@@ -210,7 +263,7 @@ public class BatteryService extends Service {
             if (exact_charge < lastCharge - step) exact_charge = lastCharge - step;
         }
 
-        // 3. Update variables safely
+        // 4. Update variables safely
         double exact_pct = exact_charge / DIVISOR;
         int totalHundredths = (int) Math.floor(exact_pct * 100.0);
         int whole = totalHundredths / 100;
@@ -222,7 +275,7 @@ public class BatteryService extends Service {
         topText = String.valueOf(whole);
         bottomText = String.format("%02d", frac);
 
-        // 4. Update Progress Bar completely independent of the anchor
+        // 5. Update Progress Bar completely independent of the anchor
         double exact_tenths = exact_pct * 10.0;
         double fraction = exact_tenths - Math.floor(exact_tenths); 
 
@@ -238,7 +291,7 @@ public class BatteryService extends Service {
 
         progressNow = (int) (fraction * progressMax);
 
-        // 5. Track live mAh
+        // 6. Track live mAh
         double total_mAh = BatteryUtils.getMah(this);
         if (total_mAh <= 0) total_mAh = 4000.0;
         displayedMah = (exact_pct / 100.0) * total_mAh;

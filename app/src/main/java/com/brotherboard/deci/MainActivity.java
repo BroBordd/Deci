@@ -65,7 +65,7 @@ public class MainActivity extends Activity {
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
         // calibrate divisor
-        BatteryService.DIVISOR = calibrate();
+        BatteryService.loadDivisor(this);
 
         // battery optimization
         Intent batteryIntent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
@@ -89,6 +89,13 @@ public class MainActivity extends Activity {
         tvNote       = findViewById(R.id.tv_note);
 
         etDivisor.setHint(formatDivisor(BatteryService.DIVISOR));
+        SharedPreferences prefs = getSharedPreferences("deci_prefs", MODE_PRIVATE);
+        float manual = prefs.getFloat("manual_divisor", -1f);
+        if (manual != -1f) {
+            etDivisor.setText(formatDivisor(manual));
+            setApplied(true);
+        }
+
         updateCurrentLabel();
 
         findViewById(R.id.btn_calibrate).setOnClickListener(new View.OnClickListener() {
@@ -105,17 +112,29 @@ public class MainActivity extends Activity {
                 public void onClick(View v) {
                     try {
                         String input = etDivisor.getText().toString().trim();
-                        float divisor = input.isEmpty() ? calibrate() : Float.parseFloat(input);
+                        SharedPreferences prefs = getSharedPreferences("deci_prefs", MODE_PRIVATE);
 
-                        // Resync exact math strictly to new divisor
-                        BatteryService.DIVISOR = divisor;
+                        if (input.isEmpty()) {
+                            // Revert mapping to dynamically automatic tracking & calibrations
+                            prefs.edit().remove("manual_divisor").apply();
+                            BatteryService.loadDivisor(MainActivity.this);
+                            etDivisor.setHint(formatDivisor(BatteryService.DIVISOR));
+                            setApplied(false);
+                        } else {
+                            // Set direct constraint override
+                            float divisor = Float.parseFloat(input);
+                            prefs.edit().putFloat("manual_divisor", divisor).apply();
+                            BatteryService.DIVISOR = divisor;
+                            setApplied(true);
+                        }
+
+                        // Resync exact math strictly to new divisor state context
                         BatteryService.lastCharge = -1;
                         BatteryService.integral_since_tick = 0.0;
                         BatteryService.learned_ratio = -1.0;
                         BatteryService.lastTickTime = SystemClock.elapsedRealtime();
 
                         updateCurrentLabel();
-                        setApplied(true);
                     } catch (NumberFormatException e) {
                         etDivisor.setError("Invalid");
                     }
@@ -181,9 +200,13 @@ public class MainActivity extends Activity {
 
         if (pct == 100) return charge / 100f;
 
-        float base = (float) charge / pct;
-        float magnitude = (float) Math.pow(10, Math.floor(Math.log10(base)));
-        return Math.round(base / magnitude) * magnitude;
+        if (pct > 0) {
+            float base = (float) charge / pct;
+            float magnitude = (float) Math.pow(10, Math.floor(Math.log10(base)));
+            float fallback = Math.round(base / magnitude) * magnitude;
+            if (fallback > 0) return fallback;
+        }
+        return 20000f;
     }
 
     private String formatDivisor(float d) {
